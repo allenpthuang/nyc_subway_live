@@ -12,15 +12,15 @@ def get_lens(stations):
     return id_len, name_len
 
 
-def station_table_by_line(stations, line):
-    banner = figlet_format(line + ' Line', font='starwars')
+def station_table_by_line(stations, line, line_name):
+    banner = figlet_format(line_name, font='smslant')
     banner = stylize(banner, colored.fg(bullet_colors[line]))
     table, border = station_table(stations)
-    return border + banner + table
+    return border + f'{line} Line ({line_name})\n' + border + banner + table
     
 
 def station_table_by_zip(stations, zip_code):
-    banner = figlet_format(zip_code, font='starwars')
+    banner = figlet_format(zip_code, font='smslant')
     table, border = station_table(stations)
     return border + banner + table
 

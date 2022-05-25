@@ -1,8 +1,7 @@
 import falcon
 import falcon.asgi
-from get_station import get_station
-from list_stations_by_line import stations_by_line
-from list_stations_by_zip import stations_by_zip
+from list_arrivial_times import list_arrivial_times
+from list_stations import stations_by_line, stations_by_zip
 
 class Station:
     async def on_get(self, rep, resp, query):
@@ -13,7 +12,7 @@ class Station:
         elif len(query) == 5 and query.isnumeric():
             resp.text = stations_by_zip(query)
         else:
-            resp.text = get_station(query)
+            resp.text = list_arrivial_times(query)
 
 class HelpMsg:
     async def on_get(self, rep, resp):

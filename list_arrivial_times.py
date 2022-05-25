@@ -1,4 +1,3 @@
-import json
 import requests
 import colored
 import textwrap
@@ -6,13 +5,14 @@ from pyfiglet import figlet_format
 from colored import stylize
 from datetime import datetime, timedelta
 from bullet_colors import bullet_colors
+from transistor_config import API_SERVER
 
 SHOW_TOP_K = 16
-URL = 'https://demo.transiter.dev/systems/nycsubway/stops/{}'
+URL = API_SERVER + '/systems/nycsubway/stops/{}'
 
-def get_station(station):
-    u = URL.format(station)
-    r = requests.get(u)
+def list_arrivial_times(station):
+    url = URL.format(station)
+    r = requests.get(url)
 
     if r.status_code == 404:
         err_msg = (
@@ -46,13 +46,6 @@ def get_station(station):
             delta_str = str(delta)
         
         route = s['trip']['route']['id']
-        arr_str_old = (
-              s['trip']['route']['id']
-              + ' Train arriving in '
-              + str(delta)
-              + ' at '
-              + arr_time.strftime('%Y-%m-%d %H:%M:%S')
-        )
 
         try:
             bullet_color = bullet_colors[route]
@@ -113,12 +106,8 @@ def get_station(station):
             header_strs.append('{0:<20}'.format(h[header_height - i - 1]))
         result = header.format(*header_strs) + result
 
-    result = border + result
-
     banner = figlet_format(data['name'], font='smslant')
-
-    result = border + banner + result
-    
+    result = border + banner + border + result
     result = border + 'Station: ' + data['name'] + '\n' + result
 
     return result
