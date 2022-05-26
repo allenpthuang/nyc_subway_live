@@ -1,6 +1,6 @@
 # sbwy.live
 
-A ~proper~ geeky way to check NYC Subway arrivial times.
+A ~proper~ geeky way to check NYC Subway arrival times.
 
 This tool is inspired by [wttr.in](https://wttr.in).
 
