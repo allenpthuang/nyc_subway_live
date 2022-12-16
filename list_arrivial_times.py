@@ -6,9 +6,11 @@ from colored import stylize
 from datetime import datetime, timedelta
 from bullet_colors import bullet_colors
 from transistor_config import API_SERVER
+from collections import defaultdict
 
 SHOW_TOP_K = 16
-URL = API_SERVER + '/systems/nycsubway/stops/{}'
+# URL = API_SERVER + '/systems/nycsubway/stops/{}'
+URL = API_SERVER + '/systems/us-ny-subway/stops/{}'
 
 def list_arrivial_times(station):
     url = URL.format(station)
@@ -29,11 +31,20 @@ def list_arrivial_times(station):
 
     dict_dir = {}
 
-    for s in data['stop_times'][:SHOW_TOP_K]:
+    PER_HEADSIGN_K = SHOW_TOP_K // 2
+    headsign_count = defaultdict(lambda: 0)
+    for s in data['stopTimes']:
+        if sum(headsign_count.values()) > SHOW_TOP_K + 1:
+            break
+
+        if headsign_count[s['headsign']] >= PER_HEADSIGN_K:
+            continue
+
+        headsign_count[s['headsign']] += 1
         try:
-            arr_time = datetime.fromtimestamp(s['arrival']['time'])
+            arr_time = datetime.fromtimestamp(int(s['arrival']['time']))
         except:
-            arr_time = datetime.fromtimestamp(s['departure']['time'])
+            arr_time = datetime.fromtimestamp(int(s['departure']['time']))
 
         delta = arr_time - datetime.now()
         if - delta > timedelta(seconds=60) or delta >= timedelta(minutes=60):
@@ -59,10 +70,10 @@ def list_arrivial_times(station):
 
 
         try:
-            dict_dir[s['direction']].append(arr_str)
+            dict_dir[s['headsign']].append(arr_str)
         except KeyError:
-            dict_dir[s['direction']] = []
-            dict_dir[s['direction']].append(arr_str)
+            dict_dir[s['headsign']] = []
+            dict_dir[s['headsign']].append(arr_str)
 
 
     n_dir = len(dict_dir.keys())
